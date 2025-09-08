@@ -5,7 +5,7 @@ import { authorizeRoles, isAuthenticated } from "../../middlewares/auth.js";
 const router = Router();
 
 // Routes
-router.post("/signup", isAuthenticated, Signup);
-router.post("/signin", isAuthenticated, authorizeRoles("ADMIN"), signin);
+router.post("/signup", Signup);
+router.post("/signin",  signin);
 
 export default router;
