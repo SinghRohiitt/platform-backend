@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
@@ -15,32 +14,33 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())     // Primary Key
-  name      String
-  email     String    @unique
-  password  String
-  role      Role      @default(USER)          // ENUM (ADMIN/USER)
-  
+  id       String @id @default(uuid()) // Primary Key
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(USER) // ENUM (ADMIN/USER)
+
   // Relations
-  projects  Project[] // user ke multiple projects
-  tasks     Task[]    // user ke multiple tasks (assigned)
-  
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  projects      Project[] // user ke multiple projects
+  createdTasks  Task[]    @relation("CreatedTasks") // ✅ tasks created by this user
+  assignedTasks Task[]    @relation("AssignedTasks")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // 2. Project Model
 model Project {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
 
   // Relation with User (owner)
   ownerId String
-  owner   User     @relation(fields: [ownerId], references: [id])
+  owner   User   @relation(fields: [ownerId], references: [id])
 
   // Relation with Task
-  tasks   Task[]
+  tasks Task[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -48,12 +48,12 @@ model Project {
 
 // 3. Task Model
 model Task {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
   description String?
 
-  status      TaskStatus   @default(PENDING)   // ENUM: PENDING / COMPLETED
-  priority    TaskPriority                        // ENUM: LOW / MEDIUM / HIGH (user must provide)
+  status   TaskStatus   @default(PENDING) // ENUM: PENDING / COMPLETED
+  priority TaskPriority // ENUM: LOW / MEDIUM / HIGH
 
   // Relation with Project
   projectId String
@@ -61,12 +61,15 @@ model Task {
 
   // Relation with User (assignee)
   assignedTo String
-  assigned   User    @relation(fields: [assignedTo], references: [id])
+  assigned   User   @relation("AssignedTasks", fields: [assignedTo], references: [id])
+
+  // Relation with User (creator)
+  createdBy String
+  creator   User   @relation("CreatedTasks", fields: [createdBy], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 // ==================== ENUMS ====================
 
