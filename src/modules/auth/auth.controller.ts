@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import prisma from "../../config/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../../middlewares/auth.js";
 
 export const Signup = async (req: Request, res: Response) => {
   try {
@@ -61,6 +62,26 @@ export const signin = async (req: Request, res: Response) => {
         role: user.role,
       },
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getCurrentUser = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { id: true, name: true, email: true, role: true },
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
