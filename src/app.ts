@@ -9,9 +9,12 @@ dotenv.config();
 
 const app = express();
 app.use(cookieParser());
-
-// Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true, // allow sending cookies
+  })
+);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
