@@ -37,6 +37,15 @@ export const getProjects = async (req: Request, res: Response) => {
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
       }),
       prisma.project.count(),
     ]);
@@ -52,6 +61,7 @@ export const getProjects = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
+
 
 // ✅ Get Single Project
 export const getProjectById = async (req: Request, res: Response) => {
