@@ -7,7 +7,12 @@ export const createTaskSchema = z.object({
   description: z.string().optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH"]).default("MEDIUM"),
   projectId: z.string().uuid("Invalid projectId"),
-  assignedTo: z.string().uuid("Invalid assigned userId"),
+  assignedTo: z
+  .string()
+  .uuid("Invalid userId")
+  .or(z.literal("")) // allow empty string
+  .nullable()        // allow null
+  .optional(),
 });
 
 export const updateTaskSchema = z.object({
@@ -26,9 +31,19 @@ export const createTask = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ errors: parsed.error.format() });
     }
 
+    const data = parsed.data;
+
     const task = await prisma.task.create({
       data: {
-        ...parsed.data,
+        title: data.title,
+        description: data.description || null,
+        priority: data.priority,
+        projectId: data.projectId,
+
+        // ✅ Assign user only if provided, else null
+        assignedTo:
+          data.assignedTo && data.assignedTo !== "" ? data.assignedTo : null,
+
         createdBy: req.user!.userId, // ✅ JWT se
       },
     });

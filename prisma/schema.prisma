@@ -60,8 +60,8 @@ model Task {
   project   Project @relation(fields: [projectId], references: [id])
 
   // Relation with User (assignee)
-  assignedTo String
-  assigned   User   @relation("AssignedTasks", fields: [assignedTo], references: [id])
+  assignedTo String?
+  assigned   User?   @relation("AssignedTasks", fields: [assignedTo], references: [id])
 
   // Relation with User (creator)
   createdBy String

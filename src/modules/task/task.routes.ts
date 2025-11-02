@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   createTask,
-  getTasks,
+  getTasks,   
   getTaskById,
   updateTask,
   deleteTask,

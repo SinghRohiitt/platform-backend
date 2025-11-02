@@ -12,7 +12,7 @@ const Projectrouter = Router();
 
 // ✅ Routes
 Projectrouter.post("/", isAuthenticated, createProject);
-Projectrouter.get("/", isAuthenticated, authorizeRoles("ADMIN"), getProjects);
+Projectrouter.get("/", isAuthenticated,  getProjects);
 Projectrouter.get("/:id", isAuthenticated, getProjectById);
 Projectrouter.put("/:id", isAuthenticated, updateProject);
 Projectrouter.delete("/:id", isAuthenticated, deleteProject);
