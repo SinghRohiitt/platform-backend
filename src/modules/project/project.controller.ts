@@ -154,3 +154,46 @@ export const assignUsersToProject = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getProjectMember = async (req: AuthRequest, res: Response) => {
+  try {
+    const { projectId } = req.params; // ✅ Should match route naming
+
+    const members = await prisma.projectMember.findMany({
+      where: { projectId },
+      include: {
+        user: true, // ✅ Fetch actual user details (id, name, email)
+      },
+    });
+
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      include: { owner: true },
+    });
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // ✅ Combine owner + member list
+    const response = [
+      {
+        id: project.owner.id,
+        name: project.owner.name,
+        email: project.owner.email,
+        role: "Owner",
+      },
+      ...members.map((m) => ({
+        id: m.user.id,
+        name: m.user.name,
+        email: m.user.email,
+        role: m.role || "Member",
+      })),
+    ];
+
+    return res.json({ members: response });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
