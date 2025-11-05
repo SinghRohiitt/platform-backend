@@ -91,11 +91,36 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await prisma.user.findMany({
-      select: { id: true, name: true, email: true, role: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        ProjectMember: {
+          select: {
+            project: {
+              select: {
+                id: true,
+                title: true,
+              }
+            }
+          }
+        }
+      }
     });
-    res.json(users);
+
+    return res.json({ users });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
+};
+
+
+export const signout = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(200).json({ message: "Logout successful" });
 };

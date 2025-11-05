@@ -127,3 +127,30 @@ export const deleteProject = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Server error", error });
   }
 };
+
+
+export const assignUsersToProject = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params; // Project ID
+    const { userIds } = req.body; // Array of user IDs
+
+    if (!Array.isArray(userIds)) {
+      return res.status(400).json({ message: "userIds must be an array" });
+    }
+
+    const assignments = userIds.map((userId) => ({
+      projectId: id,
+      userId,
+    }));
+
+    await prisma.projectMember.createMany({
+      data: assignments,
+      skipDuplicates: true, // prevents errors if already assigned
+    });
+
+    return res.json({ message: "Users assigned to project successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
