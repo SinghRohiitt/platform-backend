@@ -3,7 +3,9 @@ import prisma from "../../config/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../../middlewares/auth.js";
-
+import { emailQueue } from "../../queue/emailQueue.js";
+import dotenv from "dotenv";
+dotenv.config();
 export const Signup = async (req: Request, res: Response) => {
   try {
     const { name, email, password, role } = req.body;
@@ -20,6 +22,10 @@ export const Signup = async (req: Request, res: Response) => {
         role: role || "USER",
       },
     });
+      const token = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+    const verifyUrl = `http://localhost:5173/verify?token=${token}`;
+
+        await emailQueue.add("send-email", { email, verifyUrl });
     res
       .status(201)
       .json({ message: "User created successfully", user: newUser });
@@ -124,3 +130,4 @@ export const signout = (req: Request, res: Response) => {
   });
   res.status(200).json({ message: "Logout successful" });
 };
+

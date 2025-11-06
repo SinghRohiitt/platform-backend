@@ -28,6 +28,7 @@ model User {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   ProjectMember ProjectMember[]
+  isVerified Boolean @default(false)   
 }
 
 // 2. Project Model
