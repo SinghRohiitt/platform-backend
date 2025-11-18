@@ -197,3 +197,40 @@ export const getProjectMember = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+export const getUserProjects = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id || req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    const projects = await prisma.projectMember.findMany({
+      where: { userId },
+      include: {
+        project: {
+          include: {
+            owner: {
+              select: { id: true, name: true, email: true },
+            },
+            tasks: true,
+          },
+        },
+      },
+    });
+
+    const formatted = projects.map((p) => p.project);
+
+    res.json({ success: true, projects: formatted });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error fetching user projects",
+    });
+  }
+};
