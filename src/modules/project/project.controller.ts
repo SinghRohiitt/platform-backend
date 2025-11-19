@@ -202,7 +202,7 @@ export const getProjectMember = async (req: AuthRequest, res: Response) => {
 export const getUserProjects = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.id || req.user?.userId;
-
+console.log("User ID:", userId);
     if (!userId) {
       return res.status(401).json({
         success: false,
