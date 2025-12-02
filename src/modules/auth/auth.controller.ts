@@ -131,3 +131,57 @@ export const signout = (req: Request, res: Response) => {
   res.status(200).json({ message: "Logout successful" });
 };
 
+export const updateProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+
+    const { name, email, image } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // ==========================
+    // 1️⃣ EMAIL VALIDATION
+    // ==========================
+    if (email) {
+      const emailExists = await prisma.user.findUnique({ where: { email } });
+      if (emailExists && emailExists.id !== userId) {
+        return res.status(400).json({
+          message: "Email already in use by another user",
+        });
+      }
+    }
+
+    // ==========================
+    // 2️⃣ UPDATE USER PROFILE
+    // ==========================
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: name || undefined,
+        email: email || undefined,
+        image: image || undefined, // Store Cloudinary/S3 URL
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+      },
+    });
+
+    return res.json({
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

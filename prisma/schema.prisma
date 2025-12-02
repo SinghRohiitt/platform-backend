@@ -20,6 +20,7 @@ model User {
   password String
   role     Role   @default(USER) // ENUM (ADMIN/USER)
 
+  image    String? 
   // Relations
   projects      Project[] // user ke multiple projects
   createdTasks  Task[]    @relation("CreatedTasks") // ✅ tasks created by this user
