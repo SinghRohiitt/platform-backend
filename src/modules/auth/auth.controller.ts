@@ -22,10 +22,12 @@ export const Signup = async (req: Request, res: Response) => {
         role: role || "USER",
       },
     });
-      const token = jwt.sign({ email }, process.env.JWT_SECRET!, { expiresIn: "1h" });
+    const token = jwt.sign({ email }, process.env.JWT_SECRET!, {
+      expiresIn: "1h",
+    });
     const verifyUrl = `http://localhost:5173/verify?token=${token}`;
 
-        // await emailQueue.add("send-email", { email, verifyUrl });
+    // await emailQueue.add("send-email", { email, verifyUrl });
     res
       .status(201)
       .json({ message: "User created successfully", user: newUser });
@@ -108,11 +110,11 @@ export const getAllUsers = async (req: Request, res: Response) => {
               select: {
                 id: true,
                 title: true,
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     });
 
     return res.json({ users });
@@ -121,7 +123,6 @@ export const getAllUsers = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 export const signout = (req: Request, res: Response) => {
   res.clearCookie("token", {
@@ -179,9 +180,26 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       message: "Profile updated successfully",
       user: updatedUser,
     });
-
   } catch (error) {
     console.error("Update Profile Error:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const userLength = async (req: Request, res: Response) => {
+  try {
+    const userCount = await prisma.user.count();
+
+    return res.status(200).json({
+      success: true,
+      totalUsers: userCount,
+    });
+  } catch (error) {
+    console.error("User Count Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };

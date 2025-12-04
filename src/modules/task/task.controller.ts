@@ -184,3 +184,27 @@ export const assignTaskToUser = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const getTaskStats = async (req: AuthRequest, res: Response) => {
+  try {
+    const total = await prisma.task.count();
+
+    const completed = await prisma.task.count({
+      where: { status: "COMPLETED" }
+    });
+
+    const pending = await prisma.task.count({
+      where: { status: "PENDING" }
+    });
+
+    return res.json({
+      success: true,
+      total,
+      completed,
+      pending
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

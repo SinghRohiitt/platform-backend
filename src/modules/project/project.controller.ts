@@ -234,3 +234,21 @@ console.log("User ID:", userId);
     });
   }
 };
+
+export const projectlength = async (req: Request, res: Response) => {
+  try {
+    const totalProjects = await prisma.project.count();
+
+    return res.status(200).json({
+      success: true,
+      totalProjects,
+    });
+  } catch (error) {
+    console.error("Project Count Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

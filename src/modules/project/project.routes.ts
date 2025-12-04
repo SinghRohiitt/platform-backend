@@ -8,6 +8,7 @@ import {
   assignUsersToProject,
   // getProjectMember,
   getUserProjects,
+  projectlength,
 } from "./project.controller.js";
 import { isAuthenticated } from "../../middlewares/auth.js";
 
@@ -22,4 +23,5 @@ Projectrouter.delete("/:id", isAuthenticated, deleteProject);
 Projectrouter.post("/:id/assign", isAuthenticated, assignUsersToProject);
 // Projectrouter.get("/:projectId/members", isAuthenticated, getProjectMember);
 Projectrouter.get("/my", isAuthenticated, getUserProjects);
+Projectrouter.get("/projectlength", projectlength);
 export default Projectrouter;

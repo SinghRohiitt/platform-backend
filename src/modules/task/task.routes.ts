@@ -7,6 +7,7 @@ import {
   deleteTask,
   getTasksByProject,
   assignTaskToUser,
+  getTaskStats,
 } from "./task.controller.js";
 import { authorizeRoles, isAuthenticated } from "../../middlewares/auth.js";
 
@@ -19,4 +20,6 @@ TaskRouter.get("/:id", isAuthenticated, getTaskById);
 TaskRouter.put("/:id", isAuthenticated, updateTask);
 TaskRouter.delete("/:id", isAuthenticated, deleteTask);
 TaskRouter.put("/assign/:id", isAuthenticated, authorizeRoles("ADMIN"), assignTaskToUser);
+
+TaskRouter.get("/taskstatus",  getTaskStats);
 export default TaskRouter;
