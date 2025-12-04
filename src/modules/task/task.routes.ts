@@ -12,14 +12,15 @@ import {
 import { authorizeRoles, isAuthenticated } from "../../middlewares/auth.js";
 
 const TaskRouter = Router();
-
+TaskRouter.get("/", isAuthenticated, getTasks);
+TaskRouter.get("/taskstatus",  getTaskStats);
 TaskRouter.post("/create/:projectId", isAuthenticated,authorizeRoles("ADMIN"), createTask);
 TaskRouter.get("/get/:projectId", isAuthenticated, getTasksByProject);
-TaskRouter.get("/", isAuthenticated, getTasks);
+
 TaskRouter.get("/:id", isAuthenticated, getTaskById);
 TaskRouter.put("/:id", isAuthenticated, updateTask);
 TaskRouter.delete("/:id", isAuthenticated, deleteTask);
 TaskRouter.put("/assign/:id", isAuthenticated, authorizeRoles("ADMIN"), assignTaskToUser);
 
-TaskRouter.get("/taskstatus",  getTaskStats);
+
 export default TaskRouter;
