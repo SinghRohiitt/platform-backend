@@ -11,10 +11,13 @@ const app = express();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://13.60.31.21", // frontend URL
-    credentials: true, // allow sending cookies
+    origin: "http://13.60.31.21",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
