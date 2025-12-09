@@ -57,7 +57,7 @@ export const signin = async (req: Request, res: Response) => {
       httpOnly: true,
       secure: false, // MUST BE FALSE on HTTP
       sameSite: "lax", // works perfectly on HTTP
-      domain: "13.60.31.21", // your frontend domain
+     
         path: "/", 
       maxAge: 24 * 60 * 60 * 1000,
     });
