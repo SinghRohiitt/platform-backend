@@ -55,10 +55,10 @@ export const signin = async (req: Request, res: Response) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      domain: "13.60.31.21",
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      secure: false, // MUST BE FALSE on HTTP
+      sameSite: "lax", // works perfectly on HTTP
+      domain: "13.60.31.21", // your frontend domain
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({
