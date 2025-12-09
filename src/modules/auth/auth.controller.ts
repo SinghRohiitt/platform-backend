@@ -128,7 +128,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 export const signout = (req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: false,
   });
   res.status(200).json({ message: "Logout successful" });
 };
